@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cornell Finance Roundtable Club</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .hero {
+            background: linear-gradient(to right, #7f1d1d, #b91c1c);
+            color: white;
+            padding: 6rem 0;
+        }
+        .hero-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hero-text {
+            width: 50%;
+        }
+        .hero-image {
+            width: 50%;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: white;
+            color: #b91c1c;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            padding: 5rem 0;
+        }
+        .section-title {
+            font-size: 2rem;
+            color: #991b1b;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-icon {
+            font-size: 3rem;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            color: #991b1b;
+            margin-bottom: 0.5rem;
+        }
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #fecaca;
+        }
+        .timeline-item {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #dc2626;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+        }
+        .timeline-content {
+            width: 45%;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+        footer {
+            background-color: #7f1d1d;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Cornell Finance Roundtable Club</h1>
+                    <p>Empowering future financial leaders through knowledge, networking, and hands-on experience.</p>
+                    <a href="#" class="btn">Apply</a>
+                </div>
+                <div class="hero-image">
+                    <img src="placeholder.jpg" alt="Finance club meeting" width="400" height="300">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="container">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">👤</div>
+                    <h3 class="card-title">Expert Speakers</h3>
+                    <p>Learn from industry professionals and Cornell alumni</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3 class="card-title">Networking</h3>
+                    <p>Connect with peers and build lasting relationships</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💼</div>
+                    <h3 class="card-title">Hands-on Experience</h3>
+                    <p>Participate in case studies and financial simulations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background-color:darkgrey">
+        <div class="container">
+            <h2 class="section-title">New Member Education</h2>
+            <div class="card">
+                <div class="card-content">
+                    <img src="placeholder.jpg" alt="New member education" width="400" height="300">
+                    <h3 class="card-title">Comprehensive Training Program</h3>
+                    <p>Our new member education process is designed to give you a strong foundation in finance. You'll learn about various financial markets, investment strategies, and gain practical skills that will set you apart in your future career. Our program includes:</p>
+                    <ul>
+                        <li>Weekly workshops led by senior members</li>
+                        <li>Guest lectures from industry professionals</li>
+                        <li>Hands-on projects and case studies</li>
+                        <li>Mentorship opportunities with alumni</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Meet Our Officers</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <img src="placeholder.jpg" alt="Jane Doe" width="150" height="150" style="border-radius: 50%;">
+                    <h3 class="card-title">Jane Doe</h3>
+                    <p>President</p>
+                </div>
+                <div class="card">
+                    <img src="placeholder.jpg" alt="John Smith" width="150" height="150" style="border-radius: 50%;">
+                    <h3 class="card-title">John Smith</h3>
+                    <p>Vice President</p>
+                </div>
+                <div class="card">
+                    <img src="placeholder.jpg" alt="Emily Brown" width="150" height="150" style="border-radius: 50%;">
+                    <h3 class="card-title">Emily Brown</h3>
+                    <p>Treasurer</p>
+                </div>
+                <div class="card">
+                    <img src="placeholder.jpg" alt="Michael Johnson" width="150" height="150" style="border-radius: 50%;">
+                    <h3 class="card-title">Michael Johnson</h3>
+                    <p>Events Coordinator</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Application Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Info Session 1</h3>
+                        <p>September 5, 2024<br>6:00 PM</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Info Session 2</h3>
+                        <p>September 12, 2024<br>6:00 PM</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Application Deadline</h3>
+                        <p>September 20, 2024<br>11:59 PM</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Interview 1</h3>
+                        <p>September 25-27, 2024<br>Various</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Interview 2</h3>
+                        <p>October 1-3, 2024<br>Various</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Placement</h2>
+            <div class="card">
+                <h3 class="card-title">Our Members Have Received Offers From</h3>
+                <div class="card-grid">
+                    <img src="placeholder.jpg" alt="Company 1" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 2" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 3" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 4" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 5" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 6" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 7" width="160" height="80">
+                    <img src="placeholder.jpg" alt="Company 8" width="160" height="80">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Cornell Finance Roundtable Club. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
