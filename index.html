@@ -12,7 +12,7 @@
             background-color: #f3f4f6;
         }
         .container {
-            max-width: 1200px;
+            max-width: 980px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -29,9 +29,9 @@
         .hero-text {
             width: 50%;
         }
-        .hero-image {
+        /*.hero-image {
             width: 50%;
-        }
+        }*/
         h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
@@ -61,6 +61,18 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
+            justify-content: center;
+        }
+        /* Center the third item on small screens */
+        @media (max-width: 860px) { 
+            .card-grid {
+                grid-template-columns: repeat(1fr); /* Two columns on small screens */
+            }
+            
+            .card {
+                /* grid-column: span 2; /* Make the third item span both columns */
+                justify-self: center; /* Center the item horizontally */
+            }
         }
         .card {
             background-color: white;
@@ -120,11 +132,25 @@
         .timeline-item:nth-child(odd) .timeline-content {
             margin-left: auto;
         }
+        .image-effect {
+        width: 150px; /* Set your desired width */
+        height: auto; /* Maintain aspect ratio */
+        filter: grayscale(100%); /* Make the image black and white */
+        opacity: 0.6; /* Set initial transparency */
+        transition: opacity 0.3s ease, filter 0.3s ease; /* Smooth transition for hover effect */
+        }
+        .image-effect:hover {
+            filter: grayscale(0%); /* Remove grayscale on hover */
+            opacity: 1; /* Make the image fully opaque on hover */
+        }
         footer {
             background-color: #7f1d1d;
             color: white;
             text-align: center;
-            padding: 2rem 0;
+            padding: 1rem 0;
+        }
+        ul {
+            max-width: 20rem;
         }
     </style>
 </head>
@@ -138,48 +164,49 @@
                     <a href="#" class="btn">Apply</a>
                 </div>
                 <div class="hero-image">
-                    <img src="placeholder.jpg" alt="Finance club meeting" width="400" height="300">
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="CFRC group photo" width="400" height="300" style="border-radius: 10px;">
                 </div>
             </div>
         </div>
     </div>
-
     <section class="section">
-        <div class="container">
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-icon">👤</div>
-                    <h3 class="card-title">Expert Speakers</h3>
-                    <p>Learn from industry professionals and Cornell alumni</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">📈</div>
-                    <h3 class="card-title">Networking</h3>
-                    <p>Connect with peers and build lasting relationships</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">💼</div>
-                    <h3 class="card-title">Hands-on Experience</h3>
-                    <p>Participate in case studies and financial simulations</p>
+            <div class="container">
+                <div class="card-grid">
+                    <div class="card" style="width: 14rem;">
+                        <div class="card-icon">👤</div>
+                        <h3 class="card-title">Expert Speakers</h3>
+                        <p>Learn from industry professionals and Cornell alumni</p>
+                    </div>
+                    <div class="card" style="width: 14rem;">
+                        <div class="card-icon">📈</div>
+                        <h3 class="card-title">Networking</h3>
+                        <p>Connect with peers and build lasting relationships</p>
+                    </div>
+                    <div class="card" style="width: 14rem;">
+                        <div class="card-icon">💼</div>
+                        <h3 class="card-title">Hands-on Experience</h3>
+                        <p>Participate in case studies and financial simulations</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="section" style="background-color:darkgrey">
-        <div class="container">
+    <section class="section" style="background-color:rgb(227, 227, 227)">
+        <div class="container" style="justify-items: center;">
             <h2 class="section-title">New Member Education</h2>
-            <div class="card">
-                <div class="card-content">
-                    <img src="placeholder.jpg" alt="New member education" width="400" height="300">
+            <div class="card" style="display: flex; align-items: center; transition: box-shadow 0.3s ease;">
+                <div style="flex: 1; text-align: center;">
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="New member education" style="width:200px; height:200px; border-radius: 10px;">
+                </div>
+                <div style="flex: 2; padding: 1rem;">
                     <h3 class="card-title">Comprehensive Training Program</h3>
                     <p>Our new member education process is designed to give you a strong foundation in finance. You'll learn about various financial markets, investment strategies, and gain practical skills that will set you apart in your future career. Our program includes:</p>
-                    <ul>
+                    <div style="display: inline-flex;"><ul>
                         <li>Weekly workshops led by senior members</li>
                         <li>Guest lectures from industry professionals</li>
                         <li>Hands-on projects and case studies</li>
                         <li>Mentorship opportunities with alumni</li>
-                    </ul>
+                    </ul></div>
                 </div>
             </div>
         </div>
@@ -188,24 +215,24 @@
     <section class="section">
         <div class="container">
             <h2 class="section-title">Meet Our Officers</h2>
-            <div class="card-grid">
+            <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);">
                 <div class="card">
-                    <img src="placeholder.jpg" alt="Jane Doe" width="150" height="150" style="border-radius: 50%;">
-                    <h3 class="card-title">Jane Doe</h3>
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Pressley Ann-Childs" width="150" height="150" style="border-radius: 50%;">
+                    <h3 class="card-title">Pressley Ann-Childs</h3>
                     <p>President</p>
                 </div>
                 <div class="card">
-                    <img src="placeholder.jpg" alt="John Smith" width="150" height="150" style="border-radius: 50%;">
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="John Smith" width="150" height="150" style="border-radius: 50%;">
                     <h3 class="card-title">John Smith</h3>
                     <p>Vice President</p>
                 </div>
                 <div class="card">
-                    <img src="placeholder.jpg" alt="Emily Brown" width="150" height="150" style="border-radius: 50%;">
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Emily Brown" width="150" height="150" style="border-radius: 50%;">
                     <h3 class="card-title">Emily Brown</h3>
                     <p>Treasurer</p>
                 </div>
                 <div class="card">
-                    <img src="placeholder.jpg" alt="Michael Johnson" width="150" height="150" style="border-radius: 50%;">
+                    <img src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Michael Johnson" width="150" height="150" style="border-radius: 50%;">
                     <h3 class="card-title">Michael Johnson</h3>
                     <p>Events Coordinator</p>
                 </div>
@@ -255,16 +282,13 @@
         <div class="container">
             <h2 class="section-title">Placement</h2>
             <div class="card">
-                <h3 class="card-title">Our Members Have Received Offers From</h3>
-                <div class="card-grid">
-                    <img src="placeholder.jpg" alt="Company 1" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 2" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 3" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 4" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 5" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 6" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 7" width="160" height="80">
-                    <img src="placeholder.jpg" alt="Company 8" width="160" height="80">
+                <div class="card-grid" style="justify-items: center;">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 1" width="160" height="80">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 2" width="160" height="80">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 3" width="160" height="80">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 4" width="160" height="80">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 5" width="160" height="80">
+                    <img class="image-effect" src="https://play-lh.googleusercontent.com/1xZ5wDJiUn5o9vSx3BvED8qY6nP6SP0fMYhN-7xPHINCwoT4PBqvRYj8eL3w_fMiwS9U" alt="Company 6" width="160" height="80">
                 </div>
             </div>
         </div>
