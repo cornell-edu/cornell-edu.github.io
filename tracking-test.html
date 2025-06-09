@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Red Beds - Tracking Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-url {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .tracking-data {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        button {
+            background: #B31B1B;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #D52020;
+        }
+        .mock-stripe-link {
+            display: inline-block;
+            background: #635bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+        }
+        .mock-stripe-link:hover {
+            background: #5a54e6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Big Red Beds - Tracking Implementation Test</h1>
+    
+    <div class="test-section">
+        <h2>Current URL Parameters</h2>
+        <div id="current-url" class="test-url"></div>
+        
+        <h3>Detected Tracking Data:</h3>
+        <div id="tracking-display" class="tracking-data">
+            Loading...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test URLs</h2>
+        <p>Click these links to test different tracking scenarios:</p>
+        
+        <h3>Google Ads Test URLs:</h3>
+        <div class="test-url">
+            <a href="?gclid=test123&utm_source=google&utm_medium=cpc&utm_campaign=beds_winter&utm_term=cornell_beds&utm_content=headline1">
+                Google Ads Campaign Test
+            </a>
+        </div>
+        
+        <div class="test-url">
+            <a href="?utm_source=google&utm_medium=cpc&utm_campaign=retargeting&utm_content=video_ad">
+                Google Ads without GCLID
+            </a>
+        </div>
+        
+        <h3>Facebook/Instagram Ads Test URLs:</h3>
+        <div class="test-url">
+            <a href="?fbclid=IwAR123test&utm_source=facebook&utm_medium=cpc&utm_campaign=beds_winter&utm_content=video_ad">
+                Facebook Ads with FBCLID Test
+            </a>
+        </div>
+        
+        <div class="test-url">
+            <a href="?utm_source=instagram&utm_medium=paid_social&utm_campaign=dorm_life&utm_content=story_ad">
+                Instagram Ads Test
+            </a>
+        </div>
+        
+        <div class="test-url">
+            <a href="?fbclid=IwAR456test&utm_source=ig&utm_medium=cpc&utm_campaign=retargeting">
+                Instagram with FBCLID Test
+            </a>
+        </div>
+
+        <h3>Other Traffic Sources:</h3>
+        <div class="test-url">
+            <a href="?utm_source=facebook&utm_medium=social&utm_campaign=winter_promo">
+                Facebook Organic Post Test
+            </a>
+        </div>
+        
+        <div class="test-url">
+            <a href="?utm_source=email&utm_medium=newsletter&utm_campaign=december_sale">
+                Email Campaign Test
+            </a>
+        </div>
+        
+        <div class="test-url">
+            <a href="?ref=organic">
+                Organic/Referral Test
+            </a>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Mock Stripe Payment Links</h2>
+        <p>These links simulate the Stripe payment buttons and will show the tracking data being passed:</p>
+        
+        <a href="https://buy.stripe.com/test123" class="mock-stripe-link" target="_blank">
+            Basic Plan - Mock Link
+        </a>
+        
+        <a href="https://buy.stripe.com/test456" class="mock-stripe-link" target="_blank">
+            Premium Plan - Mock Link
+        </a>
+        
+        <div id="stripe-links-status" style="margin-top: 15px; font-style: italic;">
+            Stripe links will be updated automatically with tracking data...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Actions</h2>
+        <button onclick="refreshTracking()">Refresh Tracking Data</button>
+        <button onclick="clearTracking()">Clear All Tracking Data</button>
+        <button onclick="showAllCookies()">Show All Cookies</button>
+        <button onclick="testStripeUpdate()">Test Stripe Link Update</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Debug Console</h2>
+        <div id="debug-console" style="background: #000; color: #0f0; padding: 15px; border-radius: 4px; font-family: monospace; height: 200px; overflow-y: auto;">
+            Console output will appear here...<br>
+        </div>
+    </div>
+
+    <!-- Include the same tracking script as the main site -->
+    <script>
+        // Mock console for display
+        const debugConsole = document.getElementById('debug-console');
+        const originalConsoleLog = console.log;
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            debugConsole.innerHTML += args.join(' ') + '<br>';
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        };
+
+        // The same tracking script from index.html
+        (function() {
+          // Function to get URL parameter
+          function getURLParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+          }
+
+          // Function to set cookie
+          function setCookie(name, value, days) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+          }
+
+          // Function to get cookie
+          function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+              let c = ca[i];
+              while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+              if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+          }
+
+          // Function to capture and store tracking data
+          function captureTrackingData() {
+            const trackingData = {};
+            
+            // Capture GCLID
+            const gclid = getURLParameter('gclid');
+            if (gclid) {
+              trackingData.gclid = gclid;
+              setCookie('brb_gclid', gclid, 90);
+              console.log('Big Red Beds: GCLID captured: ' + gclid);
+            }
+            
+            // Capture UTM parameters
+            const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            let hasUtmData = false;
+            
+            utmParams.forEach(function(param) {
+              const value = getURLParameter(param);
+              if (value) {
+                trackingData[param] = value;
+                setCookie('brb_' + param, value, 90);
+                hasUtmData = true;
+                console.log('Big Red Beds: ' + param + ' captured: ' + value);
+              }
+            });
+            
+            // Enhanced tracking for Google Ads
+            if (hasUtmData) {
+              const utmSource = trackingData.utm_source || getCookie('brb_utm_source');
+              if (utmSource && (utmSource.toLowerCase().includes('google') || utmSource.toLowerCase().includes('ads'))) {
+                console.log('Big Red Beds: Google Ads traffic detected');
+                
+                // Mock GA4 server-side call for testing
+                const gaTrackingData = {
+                  utm_source: trackingData.utm_source || getCookie('brb_utm_source'),
+                  utm_medium: trackingData.utm_medium || getCookie('brb_utm_medium'),
+                  utm_campaign: trackingData.utm_campaign || getCookie('brb_utm_campaign'),
+                  utm_term: trackingData.utm_term || getCookie('brb_utm_term'),
+                  utm_content: trackingData.utm_content || getCookie('brb_utm_content'),
+                  gclid: trackingData.gclid || getCookie('brb_gclid')
+                };
+                
+                console.log('Would send GA4 server-side event: google_ads_visit with data:', gaTrackingData);
+                
+                // Simulate GA4 Measurement Protocol call
+                console.log('GA4 Measurement Protocol payload would be:', {
+                  client_id: 'test_client_id',
+                  events: [{
+                    name: 'google_ads_visit',
+                    parameters: gaTrackingData
+                  }]
+                });
+              }
+            }
+            
+            return trackingData;
+          }
+
+          // Function to build tracking reference ID for Stripe
+          function buildTrackingReference() {
+            const parts = [];
+            
+            // Add GCLID if available
+            const gclid = getCookie('brb_gclid');
+            if (gclid) {
+              parts.push('gclid:' + gclid);
+            }
+            
+            // Add UTM parameters if available
+            const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            utmParams.forEach(function(param) {
+              const value = getCookie('brb_' + param);
+              if (value) {
+                const shortParam = param.replace('utm_', '');
+                parts.push(shortParam + ':' + value);
+              }
+            });
+            
+            return parts.length > 0 ? parts.join('|') : null;
+          }
+
+          // Function to update Stripe links with tracking data
+          function updateStripeLinks() {
+            const trackingRef = buildTrackingReference();
+            if (!trackingRef) {
+                document.getElementById('stripe-links-status').innerText = 'No tracking data available to add to Stripe links.';
+                return;
+            }
+
+            // Find all Stripe payment links
+            const stripeLinks = document.querySelectorAll('a[href*="buy.stripe.com"]');
+            
+            stripeLinks.forEach(function(link) {
+              const currentHref = link.href;
+              
+              // Remove existing client_reference_id if present
+              const url = new URL(currentHref);
+              url.searchParams.delete('client_reference_id');
+              
+              // Add new tracking reference
+              url.searchParams.set('client_reference_id', encodeURIComponent(trackingRef));
+              link.href = url.toString();
+            });
+
+            console.log('Big Red Beds: Updated ' + stripeLinks.length + ' Stripe links with tracking data: ' + trackingRef);
+            document.getElementById('stripe-links-status').innerText = 
+                `Updated ${stripeLinks.length} Stripe links with tracking: ${trackingRef}`;
+          }
+
+          // Main execution
+          document.addEventListener('DOMContentLoaded', function() {
+            // Capture any new tracking data from URL
+            captureTrackingData();
+            
+            // Update Stripe links with all available tracking data
+            updateStripeLinks();
+            
+            // Update display
+            updateDisplay();
+            
+            // Also update any dynamically loaded links (run again after a short delay)
+            setTimeout(function() {
+              updateStripeLinks();
+            }, 1000);
+          });
+
+          // Expose functions for testing
+          window.brbTracking = {
+            getTrackingReference: buildTrackingReference,
+            updateStripeLinks: updateStripeLinks,
+            captureTrackingData: captureTrackingData,
+            getCookie: getCookie,
+            setCookie: setCookie
+          };
+        })();
+
+        // Test page specific functions
+        function updateDisplay() {
+            // Show current URL
+            document.getElementById('current-url').innerText = window.location.href;
+            
+            // Show tracking data
+            const trackingRef = window.brbTracking?.getTrackingReference();
+            const trackingDisplay = document.getElementById('tracking-display');
+            
+            if (trackingRef) {
+                trackingDisplay.innerHTML = `
+                    <strong>Tracking Reference:</strong> ${trackingRef}<br><br>
+                    <strong>Individual Values:</strong><br>
+                    GCLID: ${window.brbTracking.getCookie('brb_gclid') || 'None'}<br>
+                    Facebook Click ID: ${window.brbTracking.getCookie('brb_fbclid') || 'None'}<br>
+                    UTM Source: ${window.brbTracking.getCookie('brb_utm_source') || 'None'}<br>
+                    UTM Medium: ${window.brbTracking.getCookie('brb_utm_medium') || 'None'}<br>
+                    UTM Campaign: ${window.brbTracking.getCookie('brb_utm_campaign') || 'None'}<br>
+                    UTM Term: ${window.brbTracking.getCookie('brb_utm_term') || 'None'}<br>
+                    UTM Content: ${window.brbTracking.getCookie('brb_utm_content') || 'None'}
+                `;
+            } else {
+                trackingDisplay.innerHTML = '<em>No tracking data found. Visit with UTM parameters or GCLID to test.</em>';
+            }
+        }
+
+        function refreshTracking() {
+            window.brbTracking?.captureTrackingData();
+            window.brbTracking?.updateStripeLinks();
+            updateDisplay();
+            console.log('Tracking data refreshed');
+        }
+
+        function clearTracking() {
+            const cookiesToClear = ['brb_gclid', 'brb_fbclid', 'brb_utm_source', 'brb_utm_medium', 'brb_utm_campaign', 'brb_utm_term', 'brb_utm_content'];
+            cookiesToClear.forEach(cookie => {
+                document.cookie = cookie + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            });
+            updateDisplay();
+            console.log('All tracking cookies cleared');
+        }
+
+        function showAllCookies() {
+            console.log('All cookies:', document.cookie);
+            alert('Cookies logged to console: ' + document.cookie);
+        }
+
+        function testStripeUpdate() {
+            window.brbTracking?.updateStripeLinks();
+            console.log('Stripe links manually updated');
+        }
+
+        // Update display when page loads
+        window.addEventListener('load', updateDisplay);
+    </script>
+</body>
+</html> 

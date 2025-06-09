@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html data-wf-domain="www.bigredbeds.com" data-wf-locale="en" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Thank You for Your Purchase - Big Red Beds</title>
+  <meta
+    content="Thank you for choosing Big Red Beds! Your order has been confirmed and you'll receive installation details soon."
+    name="description" />
+  <meta content="Thank You for Your Purchase - Big Red Beds" property="og:title" />
+  <meta
+    content="Thank you for choosing Big Red Beds! Your order has been confirmed and you'll receive installation details soon."
+    property="og:description" />
+  <meta content="Thank You for Your Purchase - Big Red Beds" property="twitter:title" />
+  <meta
+    content="Thank you for choosing Big Red Beds! Your order has been confirmed and you'll receive installation details soon."
+    property="twitter:description" />
+  <meta content="website" property="og:type" />
+  <meta content="summary_large_image" name="twitter:card" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  
+  <!-- Webflow CSS -->
+  <link
+    href="https://cdn.prod.website-files.com/665ee14785918be03a612b4b/css/big-red-beds.webflow.5dc5733b9.min.css"
+    rel="stylesheet" type="text/css" />
+    
+  <!-- Font smoothing (same as index.html) -->
+  <style>
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+    
+  <!-- Favicon -->
+  <link
+    href="https://cdn.prod.website-files.com/665ee14785918be03a612b4b/6668bea1a614376379c5a415_Favicon.png"
+    rel="shortcut icon" type="image/x-icon" />
+  <link
+    href="https://cdn.prod.website-files.com/665ee14785918be03a612b4b/6668bea570d544493851c68d_Webclip.png"
+    rel="apple-touch-icon" />
+
+  <!-- Google Analytics 4 with Server-Side Tracking -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P1M3VD3QML"></script>
+  <script type="text/javascript">
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('set', 'developer_id.dZGVlNj', true);
+    gtag('config', 'G-P1M3VD3QML', {
+      enhanced_measurement: true,
+      custom_map: {
+        'custom_parameter_1': 'gclid',
+        'custom_parameter_2': 'utm_source',
+        'custom_parameter_3': 'utm_medium',
+        'custom_parameter_4': 'utm_campaign'
+      }
+    });
+  </script>
+
+  <!-- GA4 Server-Side Conversion Tracking -->
+  <script type="text/javascript">
+    // GA4 Configuration for server-side tracking
+    const GA4_CONFIG = {
+      measurementId: 'G-P1M3VD3QML',
+      endpoint: 'https://www.google-analytics.com/mp/collect'
+    };
+
+    // Generate or retrieve client ID for GA4
+    function getGA4ClientId() {
+      let clientId = localStorage.getItem('ga4_client_id');
+      if (!clientId) {
+        clientId = Date.now() + '.' + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('ga4_client_id', clientId);
+      }
+      return clientId;
+    }
+
+    // Generate or retrieve session ID
+    function getOrCreateSessionId() {
+      let sessionId = sessionStorage.getItem('ga4_session_id');
+      if (!sessionId) {
+        sessionId = Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        sessionStorage.setItem('ga4_session_id', sessionId);
+      }
+      return sessionId;
+    }
+
+    // Send purchase event to GA4 via Measurement Protocol
+    async function sendGA4PurchaseEvent(transactionData, trackingData) {
+      try {
+        const payload = {
+          client_id: getGA4ClientId(),
+          events: [{
+            name: 'purchase',
+            parameters: {
+              // Transaction details
+              transaction_id: transactionData.sessionId,
+              value: parseFloat(transactionData.amount),
+              currency: 'USD',
+              // Campaign attribution
+              campaign_source: trackingData.utm_source || undefined,
+              campaign_medium: trackingData.utm_medium || undefined,
+              campaign_name: trackingData.utm_campaign || undefined,
+              campaign_term: trackingData.utm_term || undefined,
+              campaign_content: trackingData.utm_content || undefined,
+              gclid: trackingData.gclid || undefined,
+              // Enhanced ecommerce
+              items: [{
+                item_id: transactionData.productId,
+                item_name: transactionData.productName,
+                category: 'Big Red Beds',
+                quantity: 1,
+                price: parseFloat(transactionData.amount)
+              }],
+              // Session info
+              session_id: getOrCreateSessionId(),
+              engagement_time_msec: 1000,
+              page_title: document.title,
+              page_location: window.location.href,
+              timestamp_micros: Date.now() * 1000
+            }
+          }]
+        };
+
+        // Remove undefined values
+        Object.keys(payload.events[0].parameters).forEach(key => {
+          if (payload.events[0].parameters[key] === undefined) {
+            delete payload.events[0].parameters[key];
+          }
+        });
+
+        const response = await fetch(`${GA4_CONFIG.endpoint}?measurement_id=${GA4_CONFIG.measurementId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          console.log('GA4 server-side purchase event sent successfully');
+          return true;
+        } else {
+          console.warn('GA4 server-side purchase event failed:', response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error('GA4 server-side purchase tracking error:', error);
+        return false;
+      }
+    }
+
+    // Send custom conversion event with all tracking data
+    async function sendGA4ConversionEvent(transactionData, trackingData) {
+      try {
+        const payload = {
+          client_id: getGA4ClientId(),
+          events: [{
+            name: 'big_red_beds_conversion',
+            parameters: {
+              // All tracking data
+              ...trackingData,
+              // Transaction data
+              transaction_id: transactionData.sessionId,
+              value: parseFloat(transactionData.amount),
+              currency: 'USD',
+              product_name: transactionData.productName,
+              product_id: transactionData.productId,
+              // Session info
+              session_id: getOrCreateSessionId(),
+              timestamp_micros: Date.now() * 1000
+            }
+          }]
+        };
+
+        const response = await fetch(`${GA4_CONFIG.endpoint}?measurement_id=${GA4_CONFIG.measurementId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          console.log('GA4 server-side conversion event sent successfully');
+          return true;
+        } else {
+          console.warn('GA4 server-side conversion event failed:', response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error('GA4 server-side conversion tracking error:', error);
+        return false;
+      }
+    }
+
+    // Expose GA4 functions for thank-you page
+    window.GA4ServerSide = {
+      sendPurchaseEvent: sendGA4PurchaseEvent,
+      sendConversionEvent: sendGA4ConversionEvent,
+      getClientId: getGA4ClientId
+    };
+  </script>
+
+  <!-- Google Ads Conversion Tracking -->
+  <!-- Replace AW-CONVERSION_ID with your actual Google Ads conversion ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-CONVERSION_ID');
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq)
+        return;
+      n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq)
+        f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = '2.0';
+      n.queue = [];
+      t = b.createElement(e);
+      t.async = !0;
+      t.src = v;
+      s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1186999809667557');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1"
+      src="https://www.facebook.com/tr?id=1186999809667557&amp;ev=PageView&amp;noscript=1"
+      style="display:none" width="1" /></noscript>
+
+  <!-- GCLID and UTM Conversion Tracking -->
+  <script type="text/javascript">
+    // Function to get URL parameters
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // Function to get cookie
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+    
+    // Function to get stored GCLID (legacy support)
+    function getStoredGclid() {
+      // First try cookies (new method)
+      const cookieGclid = getCookie('brb_gclid');
+      if (cookieGclid) {
+        return cookieGclid;
+      }
+      
+      // Fallback to localStorage (legacy)
+      const gclidData = localStorage.getItem('gclid_data');
+      if (gclidData) {
+        const parsed = JSON.parse(gclidData);
+        if (Date.now() < parsed.expires) {
+          return parsed.value;
+        } else {
+          localStorage.removeItem('gclid_data');
+        }
+      }
+      return null;
+    }
+
+    // Function to get all tracking data
+    function getAllTrackingData() {
+      const data = {
+        gclid: getStoredGclid(),
+        fbclid: getCookie('brb_fbclid'),
+        utm_source: getCookie('brb_utm_source'),
+        utm_medium: getCookie('brb_utm_medium'),
+        utm_campaign: getCookie('brb_utm_campaign'),
+        utm_term: getCookie('brb_utm_term'),
+        utm_content: getCookie('brb_utm_content')
+      };
+      
+      // Remove null/undefined values
+      Object.keys(data).forEach(key => {
+        if (!data[key]) delete data[key];
+      });
+      
+      return data;
+    }
+
+    // Function to track conversion
+    async function trackConversion() {
+      const trackingData = getAllTrackingData();
+      const sessionId = getUrlParameter('session_id') || 'unknown';
+      const amount = getUrlParameter('amount') || '0';
+      const productName = getUrlParameter('product_name') || 'Big Red Bed';
+      const productId = getUrlParameter('product_id') || 'brb-001';
+
+      console.log('Tracking conversion with data:', { trackingData, sessionId, amount, productName });
+
+      // Track Google Ads Conversion (replace with your conversion label)
+      if (typeof gtag !== 'undefined') {
+        const conversionData = {
+          'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
+          'value': parseFloat(amount),
+          'currency': 'USD',
+          'transaction_id': sessionId
+        };
+        
+        // Add GCLID if available
+        if (trackingData.gclid) {
+          conversionData.gclid = trackingData.gclid;
+        }
+        
+        gtag('event', 'conversion', conversionData);
+
+        // Prepare transaction data for GA4 server-side tracking
+        const transactionData = {
+          sessionId: sessionId,
+          amount: amount,
+          productName: productName,
+          productId: productId
+        };
+
+        // Try GA4 server-side tracking first
+        let serverSideSuccess = false;
+        if (window.GA4ServerSide && Object.keys(trackingData).length > 0) {
+          try {
+            // Send both purchase and custom conversion events
+            const purchaseSuccess = await window.GA4ServerSide.sendPurchaseEvent(transactionData, trackingData);
+            const conversionSuccess = await window.GA4ServerSide.sendConversionEvent(transactionData, trackingData);
+            serverSideSuccess = purchaseSuccess || conversionSuccess;
+          } catch (error) {
+            console.error('GA4 server-side tracking failed:', error);
+          }
+        }
+
+        // Fallback to client-side tracking if server-side fails
+        if (!serverSideSuccess && typeof gtag !== 'undefined') {
+          console.log('Using client-side GA4 fallback');
+          
+          // Track Google Analytics Enhanced Ecommerce with UTM data
+          const purchaseData = {
+            'transaction_id': sessionId,
+            'value': parseFloat(amount),
+            'currency': 'USD',
+            'items': [{
+              'item_id': productId,
+              'item_name': productName,
+              'category': 'Big Red Beds',
+              'quantity': 1,
+              'price': parseFloat(amount)
+            }]
+          };
+          
+          // Add UTM data to purchase event
+          if (trackingData.utm_source) purchaseData.campaign_source = trackingData.utm_source;
+          if (trackingData.utm_medium) purchaseData.campaign_medium = trackingData.utm_medium;
+          if (trackingData.utm_campaign) purchaseData.campaign_name = trackingData.utm_campaign;
+          if (trackingData.utm_term) purchaseData.campaign_term = trackingData.utm_term;
+          if (trackingData.utm_content) purchaseData.campaign_content = trackingData.utm_content;
+          
+          gtag('event', 'purchase', purchaseData);
+          
+          // Send custom event with all tracking data for detailed analysis
+          if (Object.keys(trackingData).length > 0) {
+            gtag('event', 'purchase_with_tracking_data', {
+              ...trackingData,
+              'transaction_id': sessionId,
+              'value': parseFloat(amount),
+              'product_name': productName
+            });
+          }
+        }
+      }
+
+              // Track Facebook Pixel Purchase with enhanced attribution
+        if (typeof fbq !== 'undefined') {
+          const fbData = {
+            value: parseFloat(amount),
+            currency: 'USD',
+            content_name: productName,
+            content_ids: [productId],
+            content_type: 'product',
+            // Enhanced Facebook attribution
+            contents: [{
+              id: productId,
+              quantity: 1,
+              item_price: parseFloat(amount)
+            }]
+          };
+          
+          // Add UTM data as custom parameters
+          if (trackingData.utm_source) fbData.utm_source = trackingData.utm_source;
+          if (trackingData.utm_campaign) fbData.utm_campaign = trackingData.utm_campaign;
+          if (trackingData.utm_medium) fbData.utm_medium = trackingData.utm_medium;
+          if (trackingData.utm_term) fbData.utm_term = trackingData.utm_term;
+          if (trackingData.utm_content) fbData.utm_content = trackingData.utm_content;
+          
+          // Add Facebook Click ID for attribution
+          if (trackingData.fbclid) {
+            fbData.fbclid = trackingData.fbclid;
+            // Set external_id for enhanced matching
+            fbData.external_id = trackingData.fbclid;
+          }
+          
+          // Send standard purchase event
+          fbq('track', 'Purchase', fbData);
+
+          // Send custom conversion event for detailed tracking
+          fbq('trackCustom', 'BigRedBedsConversion', {
+            ...fbData,
+            transaction_id: sessionId,
+            product_category: 'dorm_furniture',
+            customer_type: 'college_student'
+          });
+
+          // If this is from Facebook/Instagram, send additional events
+          const isFromFacebook = trackingData.utm_source && 
+            (trackingData.utm_source.toLowerCase().includes('facebook') || 
+             trackingData.utm_source.toLowerCase().includes('instagram') || 
+             trackingData.utm_source.toLowerCase().includes('ig'));
+             
+          if (isFromFacebook || trackingData.fbclid) {
+            fbq('trackCustom', 'FacebookAdsConversion', {
+              value: parseFloat(amount),
+              currency: 'USD',
+              fbclid: trackingData.fbclid,
+              utm_campaign: trackingData.utm_campaign,
+              utm_content: trackingData.utm_content,
+              ad_source: trackingData.utm_source
+            });
+          }
+        }
+    }
+
+    // Auto-redirect to homepage after 15 seconds
+    let countdownSeconds = 15;
+    function updateCountdown() {
+      const countdownElement = document.getElementById('countdown');
+      if (countdownElement) {
+        countdownElement.textContent = countdownSeconds;
+      }
+      
+      if (countdownSeconds <= 0) {
+        window.location.href = '/';
+      } else {
+        countdownSeconds--;
+        setTimeout(updateCountdown, 1000);
+      }
+    }
+
+    // Referral URL Generation and Management
+    function generateReferralUrl() {
+      // Function to set cookie
+      function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
+      }
+
+      // Function to get cookie
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      // Check if we already have a referral timestamp
+      let referralTimestamp = getCookie('brb_referral_timestamp');
+      
+      if (!referralTimestamp) {
+        // Generate new timestamp for first-time visitor
+        referralTimestamp = Date.now().toString();
+        setCookie('brb_referral_timestamp', referralTimestamp, 365); // Store for 1 year
+        console.log('Big Red Beds: Generated new referral timestamp:', referralTimestamp);
+      }
+
+      // Get the base URL (remove any existing parameters)
+      const baseUrl = window.location.origin;
+      
+      // Create clean referral URL with the timestamp
+      const referralUrl = baseUrl + '/?ref=' + referralTimestamp;
+      
+      // Update the display
+      document.getElementById('referralUrl').textContent = referralUrl;
+      
+      return referralUrl;
+    }
+
+    // Copy referral URL to clipboard
+    function copyReferralUrl() {
+      const referralUrl = document.getElementById('referralUrl').textContent;
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        // Modern approach
+        navigator.clipboard.writeText(referralUrl).then(function() {
+          showCopyFeedback();
+        }).catch(function(err) {
+          console.error('Failed to copy: ', err);
+          fallbackCopyMethod(referralUrl);
+        });
+      } else {
+        // Fallback for older browsers
+        fallbackCopyMethod(referralUrl);
+      }
+    }
+
+    // Fallback copy method for older browsers
+    function fallbackCopyMethod(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        showCopyFeedback();
+      } catch (err) {
+        console.error('Fallback copy failed: ', err);
+        // Show manual copy instruction
+        alert('Please manually copy this URL: ' + text);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+
+    // Show copy success feedback
+    function showCopyFeedback() {
+      const feedback = document.getElementById('copyFeedback');
+      feedback.style.display = 'block';
+      
+      // Hide feedback after animation completes
+      setTimeout(function() {
+        feedback.style.display = 'none';
+      }, 2000);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      trackConversion();
+      updateCountdown();
+      generateReferralUrl();
+    });
+  </script>
+
+  <!-- Global Webflow Typography Styles (same as index.html) -->
+  <style>
+    /* Typography inheritance from Webflow */
+    a,
+    .w-input,
+    .w-select,
+    .w-tab-link,
+    .w-nav-link,
+    .w-dropdown-btn,
+    .w-dropdown-toggle,
+    .w-dropdown-link {
+      color: inherit;
+      text-decoration: inherit;
+      font-size: inherit;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+
+  <!-- Custom Styles -->
+  <style>
+    
+    .thank-you-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, white 0%, lightgray 100%);
+      color: white;
+    }
+    
+    .thank-you-card {
+      background: white;
+      color: #333;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 600px;
+      margin: 2rem;
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .thank-you-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #222222;
+    }
+    
+    .thank-you-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .contact-info {
+      background: #F7F7F7;
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem 0;
+      font-size: 1.1rem;
+    }
+    
+    .contact-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      color: #B31B1B;
+    }
+    
+    .social-media {
+      margin: 0;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #B31B1B, #841313);
+
+      color: white;
+      border-radius: 50%;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .social-link:hover {
+      transform: scale(1.1);
+      background: #D52020;
+
+      color: white;
+    }
+    
+    .countdown-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #F7F7F7;
+      border-radius: 10px;
+      border: 2px solid #B31B1B;
+      color: #222222;
+    }
+    
+    .countdown-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #B31B1B;
+    }
+    
+    .home-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #B31B1B, #841313);
+
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .home-button:hover {
+      background: linear-gradient(135deg, #D52020, #B31B1B);
+      transform: translateY(-2px);
+      color: white;
+    }
+    
+    /* Referral Section Styles */
+    .referral-section {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: #F0F8FF;
+      border-radius: 10px;
+      border: 2px solid #B31B1B;
+      text-align: center;
+    }
+    
+    .referral-url-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1rem 0;
+      background: white;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+    
+    .referral-url {
+      flex: 1;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      font-size: 0.9rem;
+      color: #333;
+      word-break: break-all;
+      text-align: left;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .copy-button {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #B31B1B, #841313);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    
+    .copy-button:hover {
+      background: linear-gradient(135deg, #D52020, #B31B1B);
+      transform: scale(1.05);
+    }
+    
+    .copy-button:active {
+      transform: scale(0.98);
+    }
+    
+    .copy-feedback {
+      display: none;
+      color: #4CAF50;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      animation: fadeInOut 2s ease;
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+  </style>
+</head>
+
+<body class="body">
+  <div class="thank-you-container">
+    <div class="thank-you-card">
+      <!-- Success Icon -->
+      <div class="success-icon">
+        <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+      </div>
+      
+      <!-- Thank You Message -->
+      <h1 class="thank-you-title">Thank You for Your Purchase!</h1>
+      <p class="thank-you-subtitle">
+        🎉 Welcome to the Big Red Beds family! Your order has been confirmed and you'll receive more details via email shortly. 
+        Get ready for the best sleep of your Cornell career!
+      </p>
+      
+      <!-- Contact Information -->
+      <div class="contact-info">
+        <h4 style="margin-bottom: 1.5rem; color: #333;">Contact Us</h4>
+        
+        <div class="contact-item">
+          <svg class="contact-icon" fill="currentColor" viewBox="0 0 24 24"> <!-- email icon -->
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg> <!-- end email icon -->
+        <h5> <span> team@bigredbeds.com</span> </h5>
+        </div>
+        
+        <!-- Social Media buttons -->
+        <div class="social-media">
+          <div class="social-links">
+            <a href="https://instagram.com/bigredbeds" class="social-link" target="_blank" rel="noopener">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"> <!-- Instagram icon -->
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            
+            <a href="https://linkedin.com/company/bigredbeds" class="social-link" target="_blank" rel="noopener">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"> <!-- LinkedIn icon -->
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              </svg>
+            </a>
+
+            <a href="https://facebook.com/bigredbeds" class="social-link" target="_blank" rel="noopener">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"> <!-- Facebook icon -->
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Referral Section -->
+        <div class="referral-section">
+          <h4 style="margin-bottom: 1rem; color: #333;">🎁 Refer Your Friends!</h4>
+          <p style="margin-bottom: 1rem; color: #666; font-size: 0.95rem;">Share Big Red Beds with your Cornell friends and help them sleep better too!</p>
+          
+          <div class="referral-url-container">
+            <div class="referral-url" id="referralUrl">Generating your referral link...</div>
+            <button class="copy-button" id="copyButton" onclick="copyReferralUrl()">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+              Copy
+            </button>
+          </div>
+          
+          <div class="copy-feedback" id="copyFeedback">✅ Copied to clipboard!</div>
+        </div>
+      </div>
+      
+      <!-- Countdown and Redirect -->
+      <div class="countdown-section">
+        <p>Redirecting you to our homepage in <span class="countdown-number" id="countdown">15</span> seconds</p>
+        <a href="/" class="home-button">Go to Homepage Now</a>
+      </div>
+      
+      <!-- Additional Info -->
+      <div style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 10px; color: #856404; text-align: left;">
+        <strong style="text-align: center; display: block;">📦 What's Next?</strong><br>
+        • You'll receive a confirmation email (please check your spam folder)<br>
+        • Our team will contact you to schedule installation before move-in<br>
+        • Installation is completely FREE and takes about 15 minutes<br>
+        • Questions? Contact us anytime!
+      </div>
+    </div>
+  </div>
+
+  <!-- Webflow Script -->
+  <script type="text/javascript">
+    !function (o, c) {
+      var n = c.documentElement,
+        t = " w-mod-";
+      n.className += t + "js",
+        ("ontouchstart" in o || o.DocumentTouch && c instanceof DocumentTouch) && (n.className += t + "touch")
+    }(window, document);
+  </script>
+</body>
+</html> 
