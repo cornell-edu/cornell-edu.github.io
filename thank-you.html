@@ -205,15 +205,7 @@
     };
   </script>
 
-  <!-- Google Ads Conversion Tracking -->
-  <!-- Replace AW-CONVERSION_ID with your actual Google Ads conversion ID -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_ID"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'AW-CONVERSION_ID');
-  </script>
+
 
   <!-- Meta Pixel Code -->
   <script>
@@ -308,30 +300,15 @@
     // Function to track conversion
     async function trackConversion() {
       const trackingData = getAllTrackingData();
-      const sessionId = getUrlParameter('session_id') || 'unknown';
+      const sessionId = getUrlParameter('checkout_session_id') || getUrlParameter('session_id') || 'unknown';
       const amount = getUrlParameter('amount') || '0';
       const productName = getUrlParameter('product_name') || 'Big Red Bed';
       const productId = getUrlParameter('product_id') || 'brb-001';
 
       console.log('Tracking conversion with data:', { trackingData, sessionId, amount, productName });
 
-      // Track Google Ads Conversion (replace with your conversion label)
+      // Prepare transaction data for GA4 server-side tracking
       if (typeof gtag !== 'undefined') {
-        const conversionData = {
-          'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
-          'value': parseFloat(amount),
-          'currency': 'USD',
-          'transaction_id': sessionId
-        };
-        
-        // Add GCLID if available
-        if (trackingData.gclid) {
-          conversionData.gclid = trackingData.gclid;
-        }
-        
-        gtag('event', 'conversion', conversionData);
-
-        // Prepare transaction data for GA4 server-side tracking
         const transactionData = {
           sessionId: sessionId,
           amount: amount,
