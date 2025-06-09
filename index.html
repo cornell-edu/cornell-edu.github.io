@@ -40,7 +40,7 @@
       href="https://cdn.prod.website-files.com/665ee14785918be03a612b4b/6668bea570d544493851c68d_Webclip.png"
       rel="apple-touch-icon" />
     <link href="https://www.bigredbeds.com/" rel="canonical" />
-    <!-- Google Analytics 4 with Enhanced Server-Side Tracking -->
+    <!-- Google Analytics 4 with Enhanced Client-Side Tracking -->
     <script async=""
       src="https://www.googletagmanager.com/gtag/js?id=G-P1M3VD3QML"></script>
     <script type="text/javascript">
@@ -62,7 +62,7 @@
       });
     </script>
 
-    <!-- GA4 Server-Side Tracking Implementation -->
+    <!-- GA4 Enhanced Client-Side Tracking Implementation -->
     <script type="text/javascript">
       // GA4 Configuration for server-side tracking
       const GA4_CONFIG = {
@@ -90,49 +90,28 @@
         return sessionId;
       }
 
-      // Send event to GA4 via Measurement Protocol
+      // Send event to GA4 via gtag (client-side only due to CORS restrictions)
       async function sendGA4Event(eventName, parameters = {}) {
         try {
-          const payload = {
-            client_id: getGA4ClientId(),
-            events: [
-              {
-                name: eventName,
-                parameters: {
-                  ...parameters,
-                  // Add session info
-                  session_id: getOrCreateSessionId(),
-                  engagement_time_msec: 1000,
-                  // Required for some events
-                  // Add page info
-                  page_title: document.title,
-                  page_location: window.location.href,
-                  // Add timestamp
-                  timestamp_micros: Date.now() * 1000
-                }
+          // Use gtag for client-side tracking as server-side from browser is blocked by CORS
+          if (typeof gtag !== 'undefined') {
+            // Clean up parameters for gtag
+            const cleanParams = {};
+            Object.keys(parameters).forEach(key => {
+              if (parameters[key] !== undefined && parameters[key] !== null) {
+                cleanParams[key] = parameters[key];
               }
-            ]
-          };
-
-          const response = await fetch(`${GA4_CONFIG.endpoint
-            }?measurement_id=${GA4_CONFIG.measurementId
-            }`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-
-          if (response.ok) {
-            console.log('GA4 server-side event sent successfully:', eventName, parameters);
+            });
+            
+            gtag('event', eventName, cleanParams);
+            console.log('GA4 client-side event sent successfully:', eventName, cleanParams);
             return true;
           } else {
-            console.warn('GA4 server-side event failed:', response.status);
+            console.warn('GA4 gtag not available');
             return false;
           }
         } catch (error) {
-          console.error('GA4 server-side tracking error:', error);
+          console.error('GA4 tracking error:', error);
           return false;
         }
       }
@@ -159,15 +138,9 @@
           }
         });
 
-        // Send to GA4 server-side
-        const serverSideSuccess = await sendGA4Event('page_view_enhanced', parameters);
-
-        // Fallback to client-side gtag if server-side fails
-        if (!serverSideSuccess && typeof gtag !== 'undefined') {
-          gtag('event', 'page_view', parameters);
-        }
-
-        return serverSideSuccess;
+        // Send to GA4 using gtag
+        const success = await sendGA4Event('page_view', parameters);
+        return success;
       }
 
       // Track Google Ads visits with enhanced attribution
@@ -190,14 +163,8 @@
           }
         });
 
-        const serverSideSuccess = await sendGA4Event('google_ads_visit', parameters);
-
-        // Fallback to client-side
-        if (!serverSideSuccess && typeof gtag !== 'undefined') {
-          gtag('event', 'google_ads_visit', parameters);
-        }
-
-        return serverSideSuccess;
+        const success = await sendGA4Event('google_ads_visit', parameters);
+        return success;
       }
 
       // Track link clicks (useful for Stripe button clicks)
@@ -219,13 +186,8 @@
           }
         });
 
-        const serverSideSuccess = await sendGA4Event('click', parameters);
-
-        if (!serverSideSuccess && typeof gtag !== 'undefined') {
-          gtag('event', 'click', parameters);
-        }
-
-        return serverSideSuccess;
+        const success = await sendGA4Event('click', parameters);
+        return success;
       }
 
       // Expose GA4 functions globally
@@ -1252,7 +1214,7 @@
                     </div>
                     <div class="pricing_button">
                       <a class="dif is-icon is-invert w-inline-block"
-                        href="https://buy.stripe.com/fZu5kD5iJdbPacc30GdjO0kh"
+                        href="https://buy.stripe.com/fZu5kD5iJdbPacc30GdjO0k"
                         id="deluxe-year" target="_blank">
                         <div class="text-size-regular text-weight-semibold">
                           Sleep
