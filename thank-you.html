@@ -227,8 +227,29 @@
       s = b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t, s)
     }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // Initialize Facebook Pixel with enhanced logging
     fbq('init', '1186999809667557');
+    console.log('Meta Pixel initialized for Thank You page');
+    
+    // Track PageView
     fbq('track', 'PageView');
+    console.log('Meta Pixel PageView tracked');
+    
+    // Test if Facebook Pixel is working
+    setTimeout(() => {
+      if (typeof fbq !== 'undefined') {
+        console.log('✓ Meta Pixel successfully loaded and ready');
+        // Send a test event to verify connectivity
+        fbq('trackCustom', 'ThankYouPageLoaded', {
+          page_type: 'thank_you',
+          test_event: true
+        });
+        console.log('✓ Meta Pixel test event sent');
+      } else {
+        console.error('✗ Meta Pixel failed to load');
+      }
+    }, 1000);
   </script>
   <noscript><img height="1"
       src="https://www.facebook.com/tr?id=1186999809667557&amp;ev=PageView&amp;noscript=1"
@@ -368,46 +389,56 @@
         }
       }
 
-              // Track Facebook Pixel Purchase with enhanced attribution
-        if (typeof fbq !== 'undefined') {
-          const fbData = {
-            value: parseFloat(amount),
-            currency: 'USD',
-            content_name: productName,
-            content_ids: [productId],
-            content_type: 'product',
-            // Enhanced Facebook attribution
-            contents: [{
-              id: productId,
-              quantity: 1,
-              item_price: parseFloat(amount)
-            }]
-          };
-          
-          // Add UTM data as custom parameters
-          if (trackingData.utm_source) fbData.utm_source = trackingData.utm_source;
-          if (trackingData.utm_campaign) fbData.utm_campaign = trackingData.utm_campaign;
-          if (trackingData.utm_medium) fbData.utm_medium = trackingData.utm_medium;
-          if (trackingData.utm_term) fbData.utm_term = trackingData.utm_term;
-          if (trackingData.utm_content) fbData.utm_content = trackingData.utm_content;
-          
-          // Add Facebook Click ID for attribution
-          if (trackingData.fbclid) {
-            fbData.fbclid = trackingData.fbclid;
-            // Set external_id for enhanced matching
-            fbData.external_id = trackingData.fbclid;
-          }
-          
+      // Track Facebook Pixel Purchase with enhanced attribution
+      console.log('Checking Facebook Pixel availability...');
+      if (typeof fbq !== 'undefined') {
+        console.log('Facebook Pixel is available, sending purchase events...');
+        
+        const fbData = {
+          value: parseFloat(amount),
+          currency: 'USD',
+          content_name: productName,
+          content_ids: [productId],
+          content_type: 'product',
+          // Enhanced Facebook attribution
+          contents: [{
+            id: productId,
+            quantity: 1,
+            item_price: parseFloat(amount)
+          }]
+        };
+        
+        // Add UTM data as custom parameters
+        if (trackingData.utm_source) fbData.utm_source = trackingData.utm_source;
+        if (trackingData.utm_campaign) fbData.utm_campaign = trackingData.utm_campaign;
+        if (trackingData.utm_medium) fbData.utm_medium = trackingData.utm_medium;
+        if (trackingData.utm_term) fbData.utm_term = trackingData.utm_term;
+        if (trackingData.utm_content) fbData.utm_content = trackingData.utm_content;
+        
+        // Add Facebook Click ID for attribution
+        if (trackingData.fbclid) {
+          fbData.fbclid = trackingData.fbclid;
+          // Set external_id for enhanced matching
+          fbData.external_id = trackingData.fbclid;
+        }
+        
+        console.log('Sending Facebook Purchase event with data:', fbData);
+        
+        try {
           // Send standard purchase event
           fbq('track', 'Purchase', fbData);
+          console.log('✓ Facebook Purchase event sent successfully');
 
           // Send custom conversion event for detailed tracking
-          fbq('trackCustom', 'BigRedBedsConversion', {
+          const customEventData = {
             ...fbData,
             transaction_id: sessionId,
             product_category: 'dorm_furniture',
             customer_type: 'college_student'
-          });
+          };
+          
+          fbq('trackCustom', 'BigRedBedsConversion', customEventData);
+          console.log('✓ Facebook BigRedBedsConversion event sent successfully');
 
           // If this is from Facebook/Instagram, send additional events
           const isFromFacebook = trackingData.utm_source && 
@@ -416,20 +447,51 @@
              trackingData.utm_source.toLowerCase().includes('ig'));
              
           if (isFromFacebook || trackingData.fbclid) {
-            fbq('trackCustom', 'FacebookAdsConversion', {
+            const facebookAdsData = {
               value: parseFloat(amount),
               currency: 'USD',
               fbclid: trackingData.fbclid,
               utm_campaign: trackingData.utm_campaign,
               utm_content: trackingData.utm_content,
               ad_source: trackingData.utm_source
-            });
+            };
+            
+            fbq('trackCustom', 'FacebookAdsConversion', facebookAdsData);
+            console.log('✓ Facebook FacebookAdsConversion event sent successfully');
           }
+          
+          // Always send a backup conversion event (even without tracking data)
+          fbq('trackCustom', 'ThankYouPageConversion', {
+            value: parseFloat(amount),
+            currency: 'USD',
+            transaction_id: sessionId,
+            product_name: productName,
+            page_type: 'thank_you'
+          });
+          console.log('✓ Facebook ThankYouPageConversion backup event sent successfully');
+          
+        } catch (error) {
+          console.error('Error sending Facebook Pixel events:', error);
         }
+        
+      } else {
+        console.error('Facebook Pixel (fbq) is not available! Check if Meta Pixel is loading correctly.');
+        
+        // Try to wait and retry
+        setTimeout(() => {
+          if (typeof fbq !== 'undefined') {
+            console.log('Facebook Pixel loaded after delay, retrying...');
+            // Retry the tracking
+            trackConversion();
+          } else {
+            console.error('Facebook Pixel still not available after delay');
+          }
+        }, 2000);
+      }
     }
 
-    // Auto-redirect to homepage after 15 seconds
-    let countdownSeconds = 15;
+    // Auto-redirect to homepage after 30 seconds
+    let countdownSeconds = 30;
     function updateCountdown() {
       const countdownElement = document.getElementById('countdown');
       if (countdownElement) {
@@ -442,6 +504,74 @@
         countdownSeconds--;
         setTimeout(updateCountdown, 1000);
       }
+    }
+
+    // Test function for manual Facebook tracking verification
+    function testFacebookTracking() {
+      console.log('=== MANUAL FACEBOOK TRACKING TEST ===');
+      
+      if (typeof fbq === 'undefined') {
+        console.error('❌ Facebook Pixel (fbq) is not defined');
+        alert('Facebook Pixel is not loaded! Check browser console for details.');
+        return;
+      }
+      
+      console.log('✅ Facebook Pixel is available');
+      
+      try {
+        // Test purchase event
+        fbq('track', 'Purchase', {
+          value: 199.99,
+          currency: 'USD',
+          content_name: 'Big Red Bed - Test',
+          content_ids: ['test-001'],
+          content_type: 'product'
+        });
+        console.log('✅ Test Purchase event sent');
+        
+        // Test custom event
+        fbq('trackCustom', 'TestEvent', {
+          test_type: 'manual_test',
+          timestamp: new Date().toISOString()
+        });
+        console.log('✅ Test custom event sent');
+        
+        alert('Facebook tracking test completed! Check browser console for details.');
+        
+      } catch (error) {
+        console.error('❌ Error during Facebook tracking test:', error);
+        alert('Facebook tracking test failed! Error: ' + error.message);
+      }
+    }
+
+    // Enhanced Facebook Pixel initialization check
+    function waitForFacebookPixel() {
+      return new Promise((resolve, reject) => {
+        // If already loaded
+        if (typeof fbq !== 'undefined') {
+          console.log('Facebook Pixel already loaded');
+          resolve();
+          return;
+        }
+
+        // Wait up to 10 seconds for Facebook Pixel to load
+        let attempts = 0;
+        const maxAttempts = 20; // 10 seconds with 500ms intervals
+        
+        const checkInterval = setInterval(() => {
+          attempts++;
+          
+          if (typeof fbq !== 'undefined') {
+            console.log('Facebook Pixel loaded after', attempts * 500, 'ms');
+            clearInterval(checkInterval);
+            resolve();
+          } else if (attempts >= maxAttempts) {
+            console.error('Facebook Pixel failed to load after 10 seconds');
+            clearInterval(checkInterval);
+            reject(new Error('Facebook Pixel timeout'));
+          }
+        }, 500);
+      });
     }
 
     // Referral URL Generation and Management
@@ -538,11 +668,30 @@
       }, 2000);
     }
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      trackConversion();
+    // Initialize on page load with proper sequencing
+    document.addEventListener('DOMContentLoaded', async function() {
+      console.log('Thank you page loaded, initializing tracking...');
+      
+      // Start non-tracking functions immediately
       updateCountdown();
       generateReferralUrl();
+      
+      try {
+        // Wait for Facebook Pixel to load before tracking conversions
+        console.log('Waiting for Facebook Pixel to load...');
+        await waitForFacebookPixel();
+        console.log('Facebook Pixel ready, starting conversion tracking...');
+        
+        // Small delay to ensure everything is ready
+        setTimeout(() => {
+          trackConversion();
+        }, 500);
+        
+      } catch (error) {
+        console.error('Facebook Pixel loading failed, proceeding with other tracking:', error);
+        // Still track conversions for GA4 even if Facebook fails
+        trackConversion();
+      }
     });
   </script>
 
@@ -859,8 +1008,10 @@
       
       <!-- Countdown and Redirect -->
       <div class="countdown-section">
-        <p>Redirecting you to our homepage in <span class="countdown-number" id="countdown">15</span> seconds</p>
+        <p>Redirecting you to our homepage in <span class="countdown-number" id="countdown">30</span> seconds</p>
         <a href="/" class="home-button">Go to Homepage Now</a>
+        <!-- Debug button for testing Facebook events -->
+        <button onclick="testFacebookTracking()" style="margin-top: 10px; padding: 8px 16px; background: #4267B2; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">🔧 Test Facebook Tracking</button>
       </div>
       
       <!-- Additional Info -->
