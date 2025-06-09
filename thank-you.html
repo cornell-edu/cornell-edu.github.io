@@ -232,18 +232,27 @@
     fbq('init', '1186999809667557');
     console.log('Meta Pixel initialized for Thank You page');
     
-    // Track PageView
-    fbq('track', 'PageView');
-    console.log('Meta Pixel PageView tracked');
+    // Don't track PageView immediately - wait for proper initialization
+    console.log('Meta Pixel PageView will be tracked after initialization');
     
-    // Test if Facebook Pixel is working
+    // Test if Facebook Pixel is working and send PageView when ready
     setTimeout(() => {
       if (typeof fbq !== 'undefined') {
         console.log('✓ Meta Pixel successfully loaded and ready');
+        
+        // Now send PageView with enhanced parameters
+        fbq('track', 'PageView', {
+          content_name: 'Thank You Page',
+          content_category: 'thank_you',
+          source: 'bigredbeds_thankyou'
+        });
+        console.log('✓ Meta Pixel PageView tracked with parameters');
+        
         // Send a test event to verify connectivity
         fbq('trackCustom', 'ThankYouPageLoaded', {
           page_type: 'thank_you',
-          test_event: true
+          test_event: true,
+          url: window.location.href
         });
         console.log('✓ Meta Pixel test event sent');
       } else {
@@ -394,6 +403,14 @@
       if (typeof fbq !== 'undefined') {
         console.log('Facebook Pixel is available, sending purchase events...');
         
+        // Ensure PageView is tracked for this session (backup)
+        fbq('track', 'PageView', {
+          content_name: 'Thank You Page - Conversion',
+          content_category: 'thank_you_conversion',
+          source: 'bigredbeds_thankyou_backup'
+        });
+        console.log('✓ Backup PageView event sent during conversion tracking');
+        
         const fbData = {
           value: parseFloat(amount),
           currency: 'USD',
@@ -506,6 +523,29 @@
       }
     }
 
+    // Function to ensure PageView is tracked
+    function ensurePageViewTracked() {
+      if (typeof fbq !== 'undefined') {
+        try {
+          fbq('track', 'PageView', {
+            content_name: 'Thank You Page',
+            content_category: 'thank_you',
+            page_type: 'conversion_page',
+            url: window.location.href,
+            timestamp: Date.now()
+          });
+          console.log('✓ PageView event sent successfully');
+          return true;
+        } catch (error) {
+          console.error('❌ Error sending PageView:', error);
+          return false;
+        }
+      } else {
+        console.error('❌ Facebook Pixel not available for PageView');
+        return false;
+      }
+    }
+
     // Test function for manual Facebook tracking verification
     function testFacebookTracking() {
       console.log('=== MANUAL FACEBOOK TRACKING TEST ===');
@@ -519,6 +559,14 @@
       console.log('✅ Facebook Pixel is available');
       
       try {
+        // Test PageView event first
+        fbq('track', 'PageView', {
+          content_name: 'Thank You Page - Manual Test',
+          content_category: 'manual_test',
+          source: 'manual_test_button'
+        });
+        console.log('✅ Test PageView event sent');
+        
         // Test purchase event
         fbq('track', 'Purchase', {
           value: 199.99,
@@ -681,6 +729,9 @@
         console.log('Waiting for Facebook Pixel to load...');
         await waitForFacebookPixel();
         console.log('Facebook Pixel ready, starting conversion tracking...');
+        
+        // Ensure PageView is tracked first
+        ensurePageViewTracked();
         
         // Small delay to ensure everything is ready
         setTimeout(() => {
