@@ -446,105 +446,10 @@
       }
     }
 
-    // Referral URL Generation and Management
-    function generateReferralUrl() {
-      // Function to set cookie
-      function setCookie(name, value, days) {
-        const expires = new Date();
-        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
-      }
-
-      // Function to get cookie
-      function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-          if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-      }
-
-      // Check if we already have a referral timestamp
-      let referralTimestamp = getCookie('brb_referral_timestamp');
-      
-      if (!referralTimestamp) {
-        // Generate new timestamp for first-time visitor
-        referralTimestamp = Date.now().toString();
-        setCookie('brb_referral_timestamp', referralTimestamp, 365); // Store for 1 year
-        console.log('Big Red Beds: Generated new referral timestamp:', referralTimestamp);
-      }
-
-      // Get the base URL (remove any existing parameters)
-      const baseUrl = window.location.origin;
-      
-      // Create clean referral URL with the timestamp
-      const referralUrl = baseUrl + '/?ref=' + referralTimestamp;
-      
-      // Update the display
-      document.getElementById('referralUrl').textContent = referralUrl;
-      
-      return referralUrl;
-    }
-
-    // Copy referral URL to clipboard
-    function copyReferralUrl() {
-      const referralUrl = document.getElementById('referralUrl').textContent;
-      
-      if (navigator.clipboard && window.isSecureContext) {
-        // Modern approach
-        navigator.clipboard.writeText(referralUrl).then(function() {
-          showCopyFeedback();
-        }).catch(function(err) {
-          console.error('Failed to copy: ', err);
-          fallbackCopyMethod(referralUrl);
-        });
-      } else {
-        // Fallback for older browsers
-        fallbackCopyMethod(referralUrl);
-      }
-    }
-
-    // Fallback copy method for older browsers
-    function fallbackCopyMethod(text) {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      try {
-        document.execCommand('copy');
-        showCopyFeedback();
-      } catch (err) {
-        console.error('Fallback copy failed: ', err);
-        // Show manual copy instruction
-        alert('Please manually copy this URL: ' + text);
-      }
-      
-      document.body.removeChild(textArea);
-    }
-
-    // Show copy success feedback
-    function showCopyFeedback() {
-      const feedback = document.getElementById('copyFeedback');
-      feedback.style.display = 'block';
-      
-      // Hide feedback after animation completes
-      setTimeout(function() {
-        feedback.style.display = 'none';
-      }, 2000);
-    }
-
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       trackConversion();
       updateCountdown();
-      generateReferralUrl();
     });
   </script>
 
@@ -590,7 +495,8 @@
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       text-align: center;
-      max-width: 600px;
+      max-width: 760px;
+      width: 100%;
       margin: 2rem;
     }
     
@@ -712,80 +618,6 @@
       transform: translateY(-2px);
       color: white;
     }
-    
-    /* Referral Section Styles */
-    .referral-section {
-      margin-top: 1.5rem;
-      padding: 1.5rem;
-      background: #F0F8FF;
-      border-radius: 10px;
-      border: 2px solid #B31B1B;
-      text-align: center;
-    }
-    
-    .referral-url-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 1rem 0;
-      background: white;
-      border-radius: 8px;
-      padding: 8px;
-      border: 1px solid #ddd;
-    }
-    
-    .referral-url {
-      flex: 1;
-      padding: 8px 12px;
-      background: transparent;
-      border: none;
-      font-size: 0.9rem;
-      color: #333;
-      word-break: break-all;
-      text-align: left;
-      font-family: 'Courier New', monospace;
-    }
-    
-    .copy-button {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: linear-gradient(135deg, #B31B1B, #841313);
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      flex-shrink: 0;
-    }
-    
-    .copy-button:hover {
-      background: linear-gradient(135deg, #D52020, #B31B1B);
-      transform: scale(1.05);
-    }
-    
-    .copy-button:active {
-      transform: scale(0.98);
-    }
-    
-    .copy-feedback {
-      display: none;
-      color: #4CAF50;
-      font-weight: bold;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      animation: fadeInOut 2s ease;
-    }
-    
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(10px); }
-      20% { opacity: 1; transform: translateY(0); }
-      80% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-10px); }
-    }
   </style>
 </head>
 
@@ -839,30 +671,6 @@
             </a>
           </div>
         </div>
-        
-        <!-- Referral Section -->
-        <div class="referral-section">
-          <h4 style="margin-bottom: 1rem; color: #333;">🎁 Refer Your Friends!</h4>
-          <p style="margin-bottom: 1rem; color: #666; font-size: 0.95rem;">Share Big Red Beds with your Cornell friends and help them sleep better too!</p>
-          
-          <div class="referral-url-container">
-            <div class="referral-url" id="referralUrl">Generating your referral link...</div>
-            <button class="copy-button" id="copyButton" onclick="copyReferralUrl()">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-              </svg>
-              Copy
-            </button>
-          </div>
-          
-          <div class="copy-feedback" id="copyFeedback">✅ Copied to clipboard!</div>
-        </div>
-      </div>
-      
-      <!-- Countdown and Redirect -->
-      <div class="countdown-section">
-        <p>Redirecting you to our homepage in <span class="countdown-number" id="countdown">30</span> seconds</p>
-        <a href="/" class="home-button">Go to Homepage Now</a>
       </div>
       
       <!-- Additional Info -->
@@ -872,6 +680,12 @@
         • Our team will contact you to schedule installation before move-in<br>
         • Installation is completely FREE and takes about 15 minutes<br>
         • Questions? Contact us anytime!
+      </div>
+      
+      <!-- Countdown and Redirect -->
+      <div class="countdown-section">
+        <p>Redirecting you to our homepage in <span class="countdown-number" id="countdown">25</span> seconds</p>
+        <a href="/" class="home-button">Go to Homepage Now</a>
       </div>
     </div>
   </div>
